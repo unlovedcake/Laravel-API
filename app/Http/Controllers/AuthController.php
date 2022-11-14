@@ -29,6 +29,66 @@ class AuthController extends Controller
         ], 200);
     }
 
+     // get all user details
+     public function userID($id)
+     {
+
+        //$user = User::findOrFail($id);
+
+        $user = User::where('id', $id)->first();
+        
+
+        if (!$user) {
+            return response([
+                'message' => 'ID not found'
+            ], 404);
+        } 
+
+        $val = json_decode($user,true);
+        $encryptionData = json_encode($user);
+
+
+  
+  
+// Store the cipher method
+$ciphering = "AES-128-CBC";
+  
+// Use OpenSSl Encryption method
+$iv_length = openssl_cipher_iv_length($ciphering);
+$options = 0;
+  
+// Non-NULL Initialization Vector for encryption
+$encryption_iv = '1234567891011121';
+
+  
+// Store the encryption key
+$encryption_key = "GeeksforGeeks";
+  
+// Use openssl_encrypt() function to encrypt the data
+$encryption = openssl_encrypt($encryptionData , $ciphering,
+            $encryption_key, $options, $encryption_iv);
+
+            $decryption_iv = '1234567891011121';
+  
+// Store the decryption key
+$decryption_key = "GeeksforGeeks";
+
+            $decryption=openssl_decrypt ($encryption, $ciphering, 
+        $decryption_key, $options, $decryption_iv);
+
+        $decryptionData = json_decode($decryption,true);
+
+    
+
+         return response([
+ 
+             'user' => $user,
+             'message' => 'Success.',
+             'status' => $decryptionData,
+         ],200 );
+        //  return json_encode($user);
+     }
+
     public function register(Request $request)
     {
 
